@@ -326,11 +326,11 @@ export function WorkClient() {
           {/* RIGHT: Scrollable Project List */}
           <div className="relative flex min-h-screen w-full flex-col p-4 pt-12 pb-32 md:p-8 lg:w-2/3 lg:p-16 lg:pt-32">
             {/* STICKY TOP FILTER BAR */}
-            <div className="hide-scrollbar sticky top-0 z-40 -mx-4 mb-16 flex items-center overflow-x-auto border-b border-neutral-800/50 bg-background/95 px-4 pt-20 pb-4 backdrop-blur-xl md:mx-0 md:px-0 md:pt-28">
+            <div className="sticky top-0 z-40 -mx-4 mb-16 flex flex-wrap items-center gap-y-4 border-b border-neutral-800/50 bg-background/95 px-4 pt-20 pb-4 backdrop-blur-xl md:mx-0 md:px-0 md:pt-28">
               <span className="mr-6 hidden shrink-0 font-mono text-xs tracking-widest text-neutral-500 uppercase md:block">
                 Filter:
               </span>
-              <div className="flex min-w-max gap-2">
+              <div className="flex flex-wrap gap-2">
                 {categories.map((cat: string) => {
                   const catSlug = slugify(cat)
                   return (
@@ -415,7 +415,7 @@ export function WorkClient() {
                             </div>
 
                             {/* View Case Study hover pill — top right of image */}
-                            <div className="absolute top-4 right-4 z-20 translate-y-2 opacity-0 transition-all duration-400 ease-out group-hover:translate-y-0 group-hover:opacity-100 md:top-6 md:right-6">
+                            <div className="absolute top-4 right-4 z-20 translate-y-0 opacity-100 transition-all duration-400 ease-out md:top-6 md:right-6 md:translate-y-2 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
                               <div className="flex items-center gap-2 rounded-full border border-brand-500/40 bg-background/60 py-2 pr-3 pl-4 backdrop-blur-md">
                                 <span className="font-mono text-xs tracking-widest text-brand-100 uppercase">
                                   View Case Study

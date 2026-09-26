@@ -505,7 +505,7 @@ export function CaseStudyClient({ slug }: { slug: string }) {
                 />
 
                 {/* Smart Hover Pill */}
-                <div className="absolute top-6 right-6 z-20 translate-y-2 opacity-0 transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100 md:top-8 md:right-8">
+                <div className="absolute top-6 right-6 z-20 translate-y-0 opacity-100 transition-all duration-500 ease-out md:top-8 md:right-8 md:translate-y-2 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
                   <div className="flex items-center gap-3 rounded-full border border-brand-500/40 bg-background/60 py-3 pr-4 pl-5 backdrop-blur-md">
                     <span className="font-mono text-xs tracking-widest text-brand-100 uppercase">
                       Next: {nextProject.title}
