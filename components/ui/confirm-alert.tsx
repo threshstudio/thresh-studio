@@ -19,6 +19,7 @@ interface ConfirmAlertProps {
   description?: string
   confirmText?: string
   cancelText?: string
+  loadingText?: string
   isLoading?: boolean
 }
 
@@ -30,6 +31,7 @@ export function ConfirmAlert({
   description = "This action cannot be undone.",
   confirmText = "Delete",
   cancelText = "Cancel",
+  loadingText = "Deleting...",
   isLoading = false,
 }: ConfirmAlertProps) {
   return (
@@ -62,7 +64,7 @@ export function ConfirmAlert({
             disabled={isLoading}
             className="rounded-xl bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
           >
-            {isLoading ? "Deleting..." : confirmText}
+            {isLoading ? loadingText : confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

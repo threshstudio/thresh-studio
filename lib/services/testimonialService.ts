@@ -1,16 +1,13 @@
+/**
+ * testimonialService.ts
+ *
+ * Single source of truth for all Testimonial DB queries.
+ * Used by API routes and server components.
+ */
 import dbConnect from "@/lib/db"
 import { Testimonial } from "@/models/Testimonial"
 import { TestimonialFormValues } from "@/lib/schemas"
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function serializeDoc(doc: any) {
-  if (!doc) return null
-  const serialized = JSON.parse(JSON.stringify(doc))
-  serialized.id = serialized._id || serialized.id
-  delete serialized._id
-  delete serialized.__v
-  return serialized
-}
+import { serializeTestimonial } from "@/lib/serializers"
 
 export async function getTestimonials(options: { activeOnly?: boolean } = {}) {
   await dbConnect()
@@ -18,20 +15,20 @@ export async function getTestimonials(options: { activeOnly?: boolean } = {}) {
   const testimonials = await Testimonial.find(query)
     .sort({ order: 1, createdAt: -1 })
     .lean()
-  return testimonials.map(serializeDoc)
+  return testimonials.map(serializeTestimonial)
 }
 
 export async function getTestimonialById(id: string) {
   await dbConnect()
   const testimonial = await Testimonial.findById(id).lean()
-  return serializeDoc(testimonial)
+  return serializeTestimonial(testimonial)
 }
 
 export async function createTestimonial(data: TestimonialFormValues) {
   await dbConnect()
   const testimonial = new Testimonial(data)
   await testimonial.save()
-  return serializeDoc(testimonial.toJSON())
+  return serializeTestimonial(testimonial.toJSON())
 }
 
 export async function updateTestimonial(
@@ -42,7 +39,7 @@ export async function updateTestimonial(
   const testimonial = await Testimonial.findByIdAndUpdate(id, data, {
     new: true,
   }).lean()
-  return serializeDoc(testimonial)
+  return serializeTestimonial(testimonial)
 }
 
 export async function deleteTestimonial(id: string) {

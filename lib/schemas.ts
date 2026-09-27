@@ -84,27 +84,40 @@ export const testimonialSchema = z.object({
 })
 export type TestimonialFormValues = z.infer<typeof testimonialSchema>
 
-export const accountSettingsSchema = z
+export const updateEmailSchema = z.object({
+  email: z.string().email("Invalid email format").min(1, "Email is required"),
+})
+export type UpdateEmailValues = z.infer<typeof updateEmailSchema>
+
+export const updatePasswordSchema = z
   .object({
-    email: z.string().email("Invalid email format").min(1, "Email is required"),
     currentPassword: z.string().min(1, "Current password is required"),
     newPassword: z
       .string()
-      .min(8, "Password must be at least 8 characters")
-      .optional()
-      .or(z.literal("")),
-    confirmPassword: z.string().optional().or(z.literal("")),
+      .refine(
+        (val) => !val || val.length >= 8,
+        "Password must be at least 8 characters"
+      )
+      .refine(
+        (val) => !val || /[a-z]/.test(val),
+        "Password must contain at least one lowercase letter"
+      )
+      .refine(
+        (val) => !val || /[A-Z]/.test(val),
+        "Password must contain at least one uppercase letter"
+      )
+      .refine(
+        (val) => !val || /[0-9]/.test(val),
+        "Password must contain at least one number"
+      )
+      .refine(
+        (val) => !val || /[^a-zA-Z0-9]/.test(val),
+        "Password must contain at least one special character"
+      ),
+    confirmPassword: z.string(),
   })
-  .refine(
-    (data) => {
-      if (data.newPassword && data.newPassword !== data.confirmPassword) {
-        return false
-      }
-      return true
-    },
-    {
-      message: "Passwords do not match",
-      path: ["confirmPassword"],
-    }
-  )
-export type AccountSettingsValues = z.infer<typeof accountSettingsSchema>
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  })
+export type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>

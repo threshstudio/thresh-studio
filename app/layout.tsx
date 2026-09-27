@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { Outfit, JetBrains_Mono } from "next/font/google"
 import { CursorProvider } from "@/components/cursor/CursorContext"
 import { ConditionalPublicLayout } from "@/components/shared/ConditionalPublicLayout"
@@ -13,6 +14,34 @@ const fontMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://threshstudio.com"),
+  title: "Thresh Studio",
+  description: "Premium product branding & cinematic marketing videos",
+  openGraph: {
+    title: "Thresh Studio",
+    description: "Premium product branding & cinematic marketing videos",
+    url: "https://threshstudio.com",
+    siteName: "Thresh Studio",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Thresh Studio Cover",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Thresh Studio",
+    description: "Premium product branding & cinematic marketing videos",
+    images: ["/og-image.jpg"],
+  },
+}
 
 export default function RootLayout({
   children,

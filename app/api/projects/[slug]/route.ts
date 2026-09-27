@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server"
-import dbConnect from "@/lib/db"
-import { Project } from "@/models/Project"
-import { serializeProject } from "@/lib/serializers"
+import { getProjectBySlug } from "@/lib/services/projectService"
 
 export async function GET(
   req: Request,
@@ -14,15 +12,13 @@ export async function GET(
       return NextResponse.json({ error: "Slug is required" }, { status: 400 })
     }
 
-    await dbConnect()
-
-    const project = await Project.findOne({ slug, isPublished: true }).lean()
+    const project = await getProjectBySlug(slug)
 
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 })
     }
 
-    return NextResponse.json(serializeProject(project))
+    return NextResponse.json(project)
   } catch (error) {
     console.error("[PUBLIC_PROJECT_GET]", error)
     return NextResponse.json(

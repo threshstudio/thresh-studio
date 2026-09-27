@@ -65,3 +65,22 @@ export function serializeTrustedBrand(doc: LeanDoc<ITrustedBrand> | null) {
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt).toISOString() : null,
   }
 }
+
+import { ITestimonial } from "@/models/Testimonial"
+
+export function serializeTestimonial(doc: LeanDoc<ITestimonial> | null) {
+  if (!doc) return null
+
+  return {
+    id: doc._id?.toString() || doc.id,
+    quote: doc.quote,
+    author: doc.author,
+    role: doc.role,
+    avatar: doc.avatar,
+    rating: doc.rating ?? 5,
+    isActive: doc.isActive ?? true,
+    order: doc.order ?? 0,
+    createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : null,
+    updatedAt: doc.updatedAt ? new Date(doc.updatedAt).toISOString() : null,
+  }
+}

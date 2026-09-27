@@ -203,6 +203,8 @@ export function AdminSidebarClient({
         onConfirm={handleSignOut}
         title="Sign Out"
         description="Are you sure you want to sign out of the admin panel?"
+        confirmText="Sign Out"
+        loadingText="Signing out..."
         isLoading={isSigningOut}
       />
     </>
