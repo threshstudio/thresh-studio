@@ -83,8 +83,10 @@ export function AccountForm({
         body: JSON.stringify({ type: "email", ...data }),
       })
 
+      const responseData = await res.json()
+
       if (!res.ok) {
-        const err = await res.json()
+        const err = responseData
         let errorMessage = err.error || "Failed to update email"
         if (err.details) {
           const issues = []
@@ -101,7 +103,11 @@ export function AccountForm({
         throw new Error(errorMessage)
       }
 
-      toast.success("Email updated successfully")
+      toast.success(
+        responseData.message ||
+          "Verification email sent. Please check your inbox."
+      )
+      emailForm.reset()
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred")
     } finally {
@@ -118,8 +124,10 @@ export function AccountForm({
         body: JSON.stringify({ type: "password", ...data }),
       })
 
+      const responseData = await res.json()
+
       if (!res.ok) {
-        const err = await res.json()
+        const err = responseData
         let errorMessage = err.error || "Failed to update password"
         if (err.details) {
           const issues = []
@@ -136,7 +144,7 @@ export function AccountForm({
         throw new Error(errorMessage)
       }
 
-      toast.success("Password updated successfully")
+      toast.success(responseData.message || "Password updated successfully")
       passwordForm.reset()
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred")
