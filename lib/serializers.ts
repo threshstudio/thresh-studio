@@ -84,3 +84,18 @@ export function serializeTestimonial(doc: LeanDoc<ITestimonial> | null) {
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt).toISOString() : null,
   }
 }
+
+import { IAdminUser } from "@/models/AdminUser"
+
+export function serializeAdminUser(doc: LeanDoc<IAdminUser> | null) {
+  if (!doc) return null
+
+  return {
+    id: doc._id?.toString() || doc.id,
+    email: doc.email,
+    pendingEmail: doc.pendingEmail || null,
+    role: doc.role,
+    createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : null,
+    updatedAt: doc.updatedAt ? new Date(doc.updatedAt).toISOString() : null,
+  }
+}

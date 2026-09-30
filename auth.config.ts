@@ -8,18 +8,22 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
       const isAdminRoute = nextUrl.pathname.startsWith("/admin")
-      const isLoginRoute = nextUrl.pathname === "/admin/login"
+      const isPublicAdminRoute = [
+        "/admin/login",
+        "/admin/verify-email",
+        "/admin/forgot-password",
+        "/admin/reset-password",
+      ].includes(nextUrl.pathname)
 
       if (isAdminRoute) {
-        if (isLoginRoute) {
-          if (isLoggedIn)
+        if (isPublicAdminRoute) {
+          if (isLoggedIn && nextUrl.pathname === "/admin/login") {
             return Response.redirect(new URL("/admin/dashboard", nextUrl))
-          return true // Let them see the login page
+          }
+          return true // Let them see the public admin page
         }
         if (isLoggedIn) return true // Let them access protected routes
         return false // Redirect unauthenticated users to login page
-      } else if (isLoggedIn && isLoginRoute) {
-        return Response.redirect(new URL("/admin/dashboard", nextUrl))
       }
       return true
     },

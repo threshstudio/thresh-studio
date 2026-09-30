@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { Eye, EyeOff, Loader2, ArrowRight } from "lucide-react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { toast } from "sonner"
 
 export function LoginForm() {
@@ -34,7 +35,7 @@ export function LoginForm() {
         router.push("/admin/dashboard")
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred")
       setIsLoading(false)
     }
@@ -63,12 +64,20 @@ export function LoginForm() {
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="mb-1.5 block text-xs font-medium tracking-wider text-neutral-400 uppercase"
-          >
-            Password
-          </label>
+          <div className="mb-1.5 flex items-center justify-between">
+            <label
+              htmlFor="password"
+              className="block text-xs font-medium tracking-wider text-neutral-400 uppercase"
+            >
+              Password
+            </label>
+            <Link
+              href="/admin/forgot-password"
+              className="text-xs font-medium text-brand-500 transition-colors hover:text-brand-400"
+            >
+              Forgot Password?
+            </Link>
+          </div>
           <div className="relative">
             <input
               id="password"

@@ -23,7 +23,11 @@ import {
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
-export function AccountForm() {
+export function AccountForm({
+  currentEmail = "Loading...",
+}: {
+  currentEmail?: string
+}) {
   const [isEmailLoading, setIsEmailLoading] = useState(false)
   const [isPasswordLoading, setIsPasswordLoading] = useState(false)
   const [showCurrent, setShowCurrent] = useState(false)
@@ -80,8 +84,21 @@ export function AccountForm() {
       })
 
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || "Failed to update email")
+        const err = await res.json()
+        let errorMessage = err.error || "Failed to update email"
+        if (err.details) {
+          const issues = []
+          Object.keys(err.details).forEach((key) => {
+            if (key !== "_errors" && err.details[key]?._errors?.length) {
+              issues.push(`${key}: ${err.details[key]._errors.join(", ")}`)
+            }
+          })
+          if (err.details._errors?.length) {
+            issues.push(err.details._errors.join(", "))
+          }
+          if (issues.length) errorMessage = issues.join(" | ")
+        }
+        throw new Error(errorMessage)
       }
 
       toast.success("Email updated successfully")
@@ -102,8 +119,21 @@ export function AccountForm() {
       })
 
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || "Failed to update password")
+        const err = await res.json()
+        let errorMessage = err.error || "Failed to update password"
+        if (err.details) {
+          const issues = []
+          Object.keys(err.details).forEach((key) => {
+            if (key !== "_errors" && err.details[key]?._errors?.length) {
+              issues.push(`${key}: ${err.details[key]._errors.join(", ")}`)
+            }
+          })
+          if (err.details._errors?.length) {
+            issues.push(err.details._errors.join(", "))
+          }
+          if (issues.length) errorMessage = issues.join(" | ")
+        }
+        throw new Error(errorMessage)
       }
 
       toast.success("Password updated successfully")
@@ -135,25 +165,40 @@ export function AccountForm() {
         <h4 className="text-lg font-bold tracking-wide text-neutral-100">
           Email Address
         </h4>
-        <Field className="group max-w-xl space-y-2.5">
-          <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-              <Mail className="h-5 w-5 text-neutral-500 transition-colors group-focus-within:text-brand-200" />
+        <div className="max-w-xl space-y-6">
+          <Field className="group space-y-2.5">
+            <FieldLabel className="ml-1 text-xs font-bold tracking-widest text-neutral-300 uppercase">
+              Current Email
+            </FieldLabel>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                <Mail className="h-5 w-5 text-neutral-500" />
+              </div>
+              <Input
+                disabled
+                value={currentEmail}
+                className="h-12 cursor-not-allowed rounded-xl border-neutral-700 bg-neutral-900/50 pl-12 text-neutral-300 shadow-inner"
+              />
             </div>
-            <Input
-              placeholder="admin@threshstudio.com"
-              className="h-12 rounded-xl border-neutral-800/60 bg-neutral-900/40 pl-12 text-white shadow-inner transition-all placeholder:text-neutral-600 focus:border-brand-500/40 focus:bg-neutral-900/80 focus:ring-1 focus:ring-brand-500/40"
-              {...emailForm.register("email")}
-            />
-          </div>
-          <FieldError
-            errors={[
-              emailForm.formState.errors.email as unknown as {
-                message?: string
-              },
-            ]}
-          />
-        </Field>
+          </Field>
+
+          <Field className="group space-y-2.5">
+            <FieldLabel className="ml-1 text-xs font-bold tracking-widest text-neutral-300 uppercase transition-colors group-focus-within:text-brand-200">
+              New Email Address
+            </FieldLabel>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                <Mail className="h-5 w-5 text-neutral-400 transition-colors group-focus-within:text-brand-200" />
+              </div>
+              <Input
+                placeholder="new.admin@threshstudio.com"
+                className="h-12 rounded-xl border-neutral-700 bg-neutral-900/50 pl-12 text-white shadow-inner transition-all placeholder:text-neutral-400 focus:border-brand-500/40 focus:bg-neutral-900/80 focus:ring-1 focus:ring-brand-500/40"
+                {...emailForm.register("email")}
+              />
+            </div>
+            <FieldError errors={[emailForm.formState.errors.email]} />
+          </Field>
+        </div>
         <div className="flex md:justify-start">
           <button
             type="submit"
@@ -182,24 +227,32 @@ export function AccountForm() {
         <div className="grid grid-cols-1 gap-x-10 gap-y-8 md:grid-cols-2">
           {/* Current Password - Full Width */}
           <Field className="group max-w-xl space-y-2.5 md:col-span-2">
-            <FieldLabel className="ml-1 text-xs font-bold tracking-widest text-neutral-400 uppercase transition-colors group-focus-within:text-brand-200">
-              Current Password
-            </FieldLabel>
+            <div className="flex items-center justify-between">
+              <FieldLabel className="ml-1 text-xs font-bold tracking-widest text-neutral-300 uppercase transition-colors group-focus-within:text-brand-200">
+                Current Password
+              </FieldLabel>
+              <a
+                href="/admin/forgot-password"
+                className="text-xs font-medium text-brand-500 transition-colors hover:text-brand-400"
+              >
+                Forgot Password?
+              </a>
+            </div>
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                <Lock className="h-5 w-5 text-neutral-500 transition-colors group-focus-within:text-brand-200" />
+                <Lock className="h-5 w-5 text-neutral-400 transition-colors group-focus-within:text-brand-200" />
               </div>
               <Input
                 type={showCurrent ? "text" : "password"}
                 placeholder="••••••••"
                 autoComplete="off"
-                className="h-12 rounded-xl border-neutral-800/60 bg-neutral-900/40 pr-12 pl-12 text-white shadow-inner transition-all placeholder:text-neutral-600 focus:border-brand-500/40 focus:bg-neutral-900/80 focus:ring-1 focus:ring-brand-500/40"
+                className="h-12 rounded-xl border-neutral-700 bg-neutral-900/50 pr-12 pl-12 text-white shadow-inner transition-all placeholder:text-neutral-400 focus:border-brand-500/40 focus:bg-neutral-900/80 focus:ring-1 focus:ring-brand-500/40"
                 {...passwordForm.register("currentPassword")}
               />
               <button
                 type="button"
                 onClick={() => setShowCurrent(!showCurrent)}
-                className="absolute top-1/2 right-4 -translate-y-1/2 text-neutral-500 transition-colors hover:text-neutral-300"
+                className="absolute top-1/2 right-4 -translate-y-1/2 text-neutral-400 transition-colors hover:text-neutral-300"
               >
                 {showCurrent ? (
                   <EyeOff className="h-4.5 w-4.5" />
@@ -209,34 +262,30 @@ export function AccountForm() {
               </button>
             </div>
             <FieldError
-              errors={[
-                passwordForm.formState.errors.currentPassword as unknown as {
-                  message?: string
-                },
-              ]}
+              errors={[passwordForm.formState.errors.currentPassword]}
             />
           </Field>
 
           {/* New Password */}
           <Field className="group space-y-2.5">
-            <FieldLabel className="ml-1 text-xs font-bold tracking-widest text-neutral-400 uppercase transition-colors group-focus-within:text-brand-200">
+            <FieldLabel className="ml-1 text-xs font-bold tracking-widest text-neutral-300 uppercase transition-colors group-focus-within:text-brand-200">
               New Password
             </FieldLabel>
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                <Key className="h-5 w-5 text-neutral-500 transition-colors group-focus-within:text-brand-200" />
+                <Key className="h-5 w-5 text-neutral-400 transition-colors group-focus-within:text-brand-200" />
               </div>
               <Input
                 type={showNew ? "text" : "password"}
                 placeholder="••••••••"
                 autoComplete="new-password"
-                className="h-12 rounded-xl border-neutral-800/60 bg-neutral-900/40 pr-12 pl-12 text-white shadow-inner transition-all placeholder:text-neutral-600 focus:border-brand-500/40 focus:bg-neutral-900/80 focus:ring-1 focus:ring-brand-500/40"
+                className="h-12 rounded-xl border-neutral-700 bg-neutral-900/50 pr-12 pl-12 text-white shadow-inner transition-all placeholder:text-neutral-400 focus:border-brand-500/40 focus:bg-neutral-900/80 focus:ring-1 focus:ring-brand-500/40"
                 {...passwordForm.register("newPassword")}
               />
               <button
                 type="button"
                 onClick={() => setShowNew(!showNew)}
-                className="absolute top-1/2 right-4 -translate-y-1/2 text-neutral-500 transition-colors hover:text-neutral-300"
+                className="absolute top-1/2 right-4 -translate-y-1/2 text-neutral-400 transition-colors hover:text-neutral-300"
               >
                 {showNew ? (
                   <EyeOff className="h-4.5 w-4.5" />
@@ -272,35 +321,29 @@ export function AccountForm() {
               </div>
             )}
 
-            <FieldError
-              errors={[
-                passwordForm.formState.errors.newPassword as unknown as {
-                  message?: string
-                },
-              ]}
-            />
+            <FieldError errors={[passwordForm.formState.errors.newPassword]} />
           </Field>
 
           {/* Confirm New Password */}
           <Field className="group space-y-2.5">
-            <FieldLabel className="ml-1 text-xs font-bold tracking-widest text-neutral-400 uppercase transition-colors group-focus-within:text-brand-200">
+            <FieldLabel className="ml-1 text-xs font-bold tracking-widest text-neutral-300 uppercase transition-colors group-focus-within:text-brand-200">
               Confirm New Password
             </FieldLabel>
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                <ShieldCheck className="h-5 w-5 text-neutral-500 transition-colors group-focus-within:text-brand-200" />
+                <ShieldCheck className="h-5 w-5 text-neutral-400 transition-colors group-focus-within:text-brand-200" />
               </div>
               <Input
                 type={showConfirm ? "text" : "password"}
                 placeholder="••••••••"
                 autoComplete="new-password"
-                className="h-12 rounded-xl border-neutral-800/60 bg-neutral-900/40 pr-12 pl-12 text-white shadow-inner transition-all placeholder:text-neutral-600 focus:border-brand-500/40 focus:bg-neutral-900/80 focus:ring-1 focus:ring-brand-500/40"
+                className="h-12 rounded-xl border-neutral-700 bg-neutral-900/50 pr-12 pl-12 text-white shadow-inner transition-all placeholder:text-neutral-400 focus:border-brand-500/40 focus:bg-neutral-900/80 focus:ring-1 focus:ring-brand-500/40"
                 {...passwordForm.register("confirmPassword")}
               />
               <button
                 type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute top-1/2 right-4 -translate-y-1/2 text-neutral-500 transition-colors hover:text-neutral-300"
+                className="absolute top-1/2 right-4 -translate-y-1/2 text-neutral-400 transition-colors hover:text-neutral-300"
               >
                 {showConfirm ? (
                   <EyeOff className="h-4.5 w-4.5" />
@@ -310,11 +353,7 @@ export function AccountForm() {
               </button>
             </div>
             <FieldError
-              errors={[
-                passwordForm.formState.errors.confirmPassword as unknown as {
-                  message?: string
-                },
-              ]}
+              errors={[passwordForm.formState.errors.confirmPassword]}
             />
           </Field>
         </div>

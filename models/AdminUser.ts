@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Model } from "mongoose"
 
 export interface IAdminUser extends Document {
   email: string
+  pendingEmail?: string
   password?: string
   name?: string
   role: string
@@ -16,6 +17,11 @@ const AdminUserSchema: Schema = new Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    pendingEmail: {
+      type: String,
       lowercase: true,
       trim: true,
     },

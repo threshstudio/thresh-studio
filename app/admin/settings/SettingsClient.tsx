@@ -2,18 +2,15 @@
 
 import { SiteSettingsValues } from "@/lib/schemas"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import { PageSkeleton } from "@/components/shared/PageSkeleton"
 import { FetchError } from "@/components/shared/FetchError"
-import { EmptyState } from "@/components/shared/EmptyState"
 import { AccountForm } from "@/components/admin/settings/AccountForm"
 import { SocialsForm } from "@/components/admin/settings/SocialsForm"
 import { HeroForm } from "@/components/admin/settings/HeroForm"
 import { TrustedBrandsForm } from "@/components/admin/settings/TrustedBrandsForm"
-import { toast } from "sonner"
 
-export function SettingsClient() {
+export function SettingsClient({ currentEmail }: { currentEmail: string }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -34,7 +31,7 @@ export function SettingsClient() {
     null
   )
 
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     setIsLoading(true)
     setIsError(false)
     try {
@@ -48,12 +45,12 @@ export function SettingsClient() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchSettings()
-  }, [])
+  }, [fetchSettings])
 
   // Sync active tab to URL
   useEffect(() => {
@@ -95,7 +92,7 @@ export function SettingsClient() {
               className={`border-b-2 px-6 py-3 text-sm font-medium tracking-wider whitespace-nowrap uppercase transition-colors ${
                 activeTab === tab.id
                   ? "border-brand-200 text-brand-200"
-                  : "border-transparent text-neutral-500 hover:text-neutral-300"
+                  : "border-transparent text-neutral-400 hover:text-neutral-200"
               }`}
             >
               {tab.label}
@@ -137,7 +134,9 @@ export function SettingsClient() {
           </div>
         ) : (
           <>
-            {activeTab === "account" && <AccountForm />}
+            {activeTab === "account" && (
+              <AccountForm currentEmail={currentEmail} />
+            )}
 
             {activeTab === "hero" && <HeroForm initialData={settings || {}} />}
 

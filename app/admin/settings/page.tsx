@@ -3,12 +3,24 @@ import { AdminNav } from "@/components/admin/AdminNav"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { SettingsClient } from "./SettingsClient"
 import { PageSkeleton } from "@/components/shared/PageSkeleton"
+import { auth } from "@/auth"
+import { getAdminUserById } from "@/lib/services/admin"
 
 export const metadata = {
   title: "Settings | Thresh Studio Admin",
 }
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const session = await auth()
+  let currentEmail = session?.user?.email || ""
+
+  if (session?.user?.id) {
+    const user = await getAdminUserById(session.user.id)
+    if (user && user.email) {
+      currentEmail = user.email
+    }
+  }
+
   return (
     <div className="flex min-h-screen text-neutral-100">
       <AdminSidebar />
@@ -27,7 +39,7 @@ export default function SettingsPage() {
           </header>
 
           <Suspense fallback={<PageSkeleton variant="form" />}>
-            <SettingsClient />
+            <SettingsClient currentEmail={currentEmail} />
           </Suspense>
         </main>
       </div>

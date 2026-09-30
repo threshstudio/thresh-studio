@@ -121,3 +121,20 @@ export const updatePasswordSchema = z
     path: ["confirmPassword"],
   })
 export type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>
+
+export const verifyEmailSchema = z.object({
+  token: z.string().min(1, "Token is required"),
+})
+export type VerifyEmailValues = z.infer<typeof verifyEmailSchema>
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email("Invalid email format").min(1, "Email is required"),
+})
+export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email("Invalid email format").min(1, "Email is required"),
+  otp: z.string().length(6, "OTP must be exactly 6 characters"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+})
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>
