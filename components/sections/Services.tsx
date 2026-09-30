@@ -33,8 +33,8 @@ const services = [
   },
   {
     id: "04",
-    name: "Visual Effects",
-    desc: "High-end post-production, color grading, and VFX that elevate your product marketing videos to a cinematic standard.",
+    name: "UGC Video",
+    desc: "Authentic, user-generated content strategies and videos that elevate your product marketing to a cinematic standard.",
     image:
       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2560&auto=format&fit=crop",
   },

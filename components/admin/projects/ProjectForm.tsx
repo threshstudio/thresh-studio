@@ -229,11 +229,8 @@ export function ProjectForm({
               <option value="3D Motion" className="bg-neutral-900 text-white">
                 3D Motion
               </option>
-              <option
-                value="Visual Effects"
-                className="bg-neutral-900 text-white"
-              >
-                Visual Effects
+              <option value="UGC Video" className="bg-neutral-900 text-white">
+                UGC Video
               </option>
             </select>
             <FieldError
