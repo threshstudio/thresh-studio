@@ -3,6 +3,7 @@
 import React, { useCallback, useState, useRef, useEffect } from "react"
 import { UploadCloud, X, File as FileIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { VideoMuteButton } from "@/components/media/VideoMuteButton"
 
 interface FileUploadProps {
   value?: File | string | null
@@ -158,14 +159,19 @@ export function FileUpload({
           )}
         >
           {fileType === "video" ? (
-            <video
-              src={previewUrl}
-              className="absolute inset-0 h-full w-full bg-black object-contain"
-              controls
-              muted
-              loop
-              playsInline
-            />
+            <>
+              <video
+                src={previewUrl}
+                className="absolute inset-0 h-full w-full bg-black object-contain"
+                controls
+                muted
+                loop
+                playsInline
+              />
+              <div className="absolute top-4 right-4 z-20">
+                <VideoMuteButton size="sm" />
+              </div>
+            </>
           ) : fileType === "image" ? (
             <img
               src={previewUrl}

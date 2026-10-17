@@ -1,10 +1,12 @@
 "use client"
 
 import React, { useRef, useState } from "react"
+import Link from "next/link"
 import { gsap, useGSAP } from "@/lib/gsap"
 import { useCursor } from "../cursor/CursorContext"
 import { Loader2 } from "lucide-react"
 import { useSettings } from "@/hooks/useSettings"
+import { VideoMuteButton } from "@/components/media/VideoMuteButton"
 
 export function Hero() {
   const { setCursorState } = useCursor()
@@ -196,7 +198,9 @@ export function Hero() {
 
           <div className="flex w-full flex-col items-stretch gap-4 px-6 sm:w-auto sm:flex-row md:gap-6 md:px-0">
             <a
-              href="/contact"
+              href="https://calendly.com/threshstudioz/30min"
+              target="_blank"
+              rel="noopener noreferrer"
               className="group relative flex cursor-none items-center justify-center overflow-hidden rounded-full border border-brand-500 bg-brand-500/10 px-6 py-4 shadow-lg backdrop-blur-md transition-colors duration-700 hover:bg-brand-500/30 sm:px-8 sm:py-4 md:px-10 md:py-5"
               onMouseEnter={() => setCursorState("magnetic")}
               onMouseLeave={() => setCursorState("default")}
@@ -207,17 +211,17 @@ export function Hero() {
               </span>
             </a>
 
-            <a
-              href="#work"
+            <Link
+              href="/work"
               className="group relative flex cursor-none items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5 px-6 py-4 shadow-lg backdrop-blur-md transition-colors duration-700 hover:border-white/30 sm:px-8 sm:py-4 md:px-10 md:py-5"
               onMouseEnter={() => setCursorState("magnetic")}
               onMouseLeave={() => setCursorState("default")}
             >
               <div className="absolute inset-0 translate-y-[101%] bg-white/10 transition-transform duration-700 ease-[0.76,0,0.24,1] group-hover:translate-y-0" />
               <span className="relative z-10 font-mono text-xs tracking-[0.2em] text-neutral-100 uppercase transition-colors duration-300 group-hover:text-white md:text-sm md:tracking-[0.3em]">
-                Watch Showreel
+                View Works
               </span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -235,19 +239,24 @@ export function Hero() {
         )}
 
         {videoUrl ? (
-          <video
-            ref={videoRef}
-            src={videoUrl}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            className="absolute inset-0 z-0 h-full w-full object-cover opacity-80"
-            onWaiting={() => setIsBuffering(true)}
-            onPlaying={() => setIsBuffering(false)}
-            onCanPlay={() => setIsBuffering(false)}
-          />
+          <>
+            <video
+              ref={videoRef}
+              src={videoUrl}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="absolute inset-0 z-0 h-full w-full object-cover opacity-80"
+              onWaiting={() => setIsBuffering(true)}
+              onPlaying={() => setIsBuffering(false)}
+              onCanPlay={() => setIsBuffering(false)}
+            />
+            <div className="absolute right-4 bottom-4 z-30 sm:right-6 sm:bottom-6">
+              <VideoMuteButton videoRef={videoRef} />
+            </div>
+          </>
         ) : (
           <div className="absolute inset-0 z-0 bg-neutral-800" />
         )}

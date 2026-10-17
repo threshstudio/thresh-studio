@@ -1,6 +1,6 @@
 import React from "react"
 import Link from "next/link"
-import { Plus, Video, Eye, EyeOff, Edit, Trash2 } from "lucide-react"
+import { Plus, Video, Eye, EyeOff } from "lucide-react"
 import { getProjects } from "@/lib/services/projectService"
 import { AdminNav } from "@/components/admin/AdminNav"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"

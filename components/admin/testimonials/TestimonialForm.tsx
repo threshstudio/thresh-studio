@@ -7,7 +7,6 @@ import { testimonialSchema, TestimonialFormValues } from "@/lib/schemas"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
-import Image from "next/image"
 import { FileUpload } from "@/components/ui/file-upload"
 import {
   uploadToCloudinary,
@@ -29,7 +28,6 @@ export function TestimonialForm({
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<TestimonialFormValues>({
     resolver: zodResolver(testimonialSchema),
     defaultValues: initialData || {

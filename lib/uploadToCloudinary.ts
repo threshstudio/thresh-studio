@@ -1,3 +1,11 @@
+/**
+ * @file uploadToCloudinary.ts
+ * @description Client-side utility for authenticated, signed direct uploads and deletions with Cloudinary.
+ */
+
+/**
+ * Uploads a local file directly to Cloudinary using a backend-generated cryptographic signature.
+ */
 export async function uploadToCloudinary(
   file: File,
   folder: string = "thresh-studio"
@@ -67,6 +75,9 @@ export async function uploadToCloudinary(
   }
 }
 
+/**
+ * Sends a deletion request to the backend to securely remove an asset from Cloudinary.
+ */
 export async function deleteFromCloudinary(url: string) {
   try {
     // If it's a blob/local url (mocked) or not a cloudinary URL, skip

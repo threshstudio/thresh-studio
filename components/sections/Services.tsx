@@ -111,6 +111,7 @@ function ServiceAccordion({
                 src={service.image}
                 alt={service.name}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="scale-105 object-cover transition-all duration-1000 hover:mix-blend-normal md:mix-blend-luminosity"
               />
               <div className="pointer-events-none absolute inset-0 bg-brand-700/20 mix-blend-overlay" />

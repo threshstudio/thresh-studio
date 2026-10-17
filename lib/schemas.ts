@@ -39,6 +39,15 @@ export const projectFormSchema = z.object({
 
 export type ProjectFormValues = z.infer<typeof projectFormSchema>
 
+export const trustedBrandSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "Name is required"),
+  logoUrl: z.string().min(1, "Logo is required").url("Must be a valid URL"),
+  isActive: z.boolean().optional(),
+  order: z.number().optional(),
+})
+export type TrustedBrandValues = z.infer<typeof trustedBrandSchema>
+
 export const siteSettingsSchema = z.object({
   heroVideoUrl: z
     .string()
@@ -61,17 +70,9 @@ export const siteSettingsSchema = z.object({
     .optional()
     .or(z.literal("")),
   vimeoUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-  trustedBrands: z.array(z.any()).optional(),
+  trustedBrands: z.array(trustedBrandSchema).optional(),
 })
 export type SiteSettingsValues = z.infer<typeof siteSettingsSchema>
-
-export const trustedBrandSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  logoUrl: z.string().min(1, "Logo is required").url("Must be a valid URL"),
-  isActive: z.boolean().default(true),
-  order: z.number().default(0),
-})
-export type TrustedBrandValues = z.infer<typeof trustedBrandSchema>
 
 export const testimonialSchema = z.object({
   quote: z.string().min(1, "Quote is required"),
@@ -138,3 +139,55 @@ export const resetPasswordSchema = z.object({
   newPassword: z.string().min(8, "Password must be at least 8 characters"),
 })
 export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>
+
+// NEWSLETTER SCHEMAS
+export const newsletterSubscribeSchema = z.object({
+  email: z.string().email("Please provide a valid email address."),
+  source: z
+    .enum(["footer", "scroll_prompt", "admin"])
+    .optional()
+    .default("footer"),
+})
+export type NewsletterSubscribeValues = z.infer<
+  typeof newsletterSubscribeSchema
+>
+
+export const newsletterUnsubscribeSchema = z.object({
+  email: z.string().email("Please provide a valid email address."),
+  token: z.string().min(1, "Unsubscribe verification token is required."),
+})
+export type NewsletterUnsubscribeValues = z.infer<
+  typeof newsletterUnsubscribeSchema
+>
+
+export const sendNewsletterSchema = z.object({
+  subject: z.string().min(1, "Subject is required"),
+  previewText: z.string().optional(),
+  contentHtml: z.string().min(1, "Newsletter content is required"),
+  contentJson: z.record(z.string(), z.unknown()).optional(),
+  testEmailOnly: z.boolean().optional(),
+  testEmail: z.string().email("Invalid test email format").optional(),
+})
+export type SendNewsletterValues = z.infer<typeof sendNewsletterSchema>
+
+export const subscribersQuerySchema = z.object({
+  search: z.string().optional().default(""),
+  status: z.enum(["all", "active", "unsubscribed"]).optional().default("all"),
+  page: z.coerce.number().int().positive().optional().default(1),
+  limit: z.coerce.number().int().positive().max(100).optional().default(20),
+})
+export type SubscribersQueryValues = z.infer<typeof subscribersQuerySchema>
+
+// UPLOAD SCHEMAS
+export const deleteUploadSchema = z.object({
+  url: z.string().url("A valid Cloudinary URL is required"),
+})
+export type DeleteUploadValues = z.infer<typeof deleteUploadSchema>
+
+export const signUploadSchema = z.object({
+  paramsToSign: z.record(
+    z.string(),
+    z.union([z.string(), z.number(), z.boolean()])
+  ),
+})
+export type SignUploadValues = z.infer<typeof signUploadSchema>

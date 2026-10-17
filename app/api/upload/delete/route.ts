@@ -8,15 +8,24 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
+import { deleteUploadSchema } from "@/lib/schemas"
+
 export async function POST(req: Request) {
   try {
     const session = await auth()
     if (!session)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const { url } = await req.json()
-    if (!url)
-      return NextResponse.json({ error: "URL is required" }, { status: 400 })
+    const body = await req.json()
+    const parsed = deleteUploadSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message || "URL is required" },
+        { status: 400 }
+      )
+    }
+
+    const { url } = parsed.data
 
     // Extract public_id from Cloudinary URL
     // e.g. https://res.cloudinary.com/cloud_name/image/upload/v1234567/thresh-studio/brands/logo.png

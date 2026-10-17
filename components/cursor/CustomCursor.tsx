@@ -8,8 +8,8 @@ const variants: Record<string, gsap.TweenVars> = {
   default: {
     width: 12,
     height: 12,
-    backgroundColor: "#FFFFFF",
-    borderColor: "rgba(0,0,0,0.1)",
+    backgroundColor: "var(--foreground, #FFFFFF)",
+    borderColor: "rgba(255,255,255,0.1)",
     borderWidth: 1,
     mixBlendMode: "normal",
     color: "transparent",
@@ -22,35 +22,35 @@ const variants: Record<string, gsap.TweenVars> = {
   project: {
     width: 80,
     height: 80,
-    backgroundColor: "#00D3DA",
+    backgroundColor: "var(--color-brand-200, #00D3DA)",
     borderColor: "transparent",
     borderWidth: 0,
     mixBlendMode: "normal",
-    color: "#000000",
+    color: "var(--background, #000000)",
   },
   explore: {
     width: 100,
     height: 100,
-    backgroundColor: "rgba(0, 211, 218, 0)",
-    borderColor: "#00D3DA",
+    backgroundColor: "transparent",
+    borderColor: "var(--color-brand-200, #00D3DA)",
     borderWidth: 1,
     mixBlendMode: "normal",
-    color: "#00D3DA",
+    color: "var(--color-brand-200, #00D3DA)",
   },
   drag: {
     width: 60,
     height: 60,
-    backgroundColor: "#111111",
-    borderColor: "#333333",
+    backgroundColor: "var(--background, #111111)",
+    borderColor: "var(--border, #333333)",
     borderWidth: 1,
     mixBlendMode: "normal",
-    color: "#FFFFFF",
+    color: "var(--foreground, #FFFFFF)",
   },
   magnetic: {
     width: 40,
     height: 40,
-    backgroundColor: "#FFFFFF",
-    borderColor: "rgba(0,0,0,0.1)",
+    backgroundColor: "var(--foreground, #FFFFFF)",
+    borderColor: "rgba(255,255,255,0.1)",
     borderWidth: 1,
     mixBlendMode: "normal",
     color: "transparent",
@@ -64,7 +64,7 @@ export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLSpanElement>(null)
 
-  // Setup GSAP quickTo for highly performant mouse tracking
+  // Setup GSAP quickTo for mouse tracking inside useGSAP
   useGSAP(() => {
     if (!cursorRef.current) return
 
@@ -106,8 +106,8 @@ export function CustomCursor() {
     return () => window.removeEventListener("mousemove", moveCursor)
   }, [cursorState, magneticTarget])
 
-  // Handle state changes (size, color, text)
-  useEffect(() => {
+  // Handle state changes (size, color, text) inside useGSAP
+  useGSAP(() => {
     if (!cursorRef.current) return
     const v = variants[cursorState] || variants.default
 
@@ -157,8 +157,8 @@ export function CustomCursor() {
       style={{
         width: 12,
         height: 12,
-        backgroundColor: "#FFFFFF",
-        borderColor: "rgba(0,0,0,0.1)",
+        backgroundColor: "var(--foreground, #FFFFFF)",
+        borderColor: "rgba(255,255,255,0.1)",
       }}
     >
       <span ref={textRef} className="opacity-0">

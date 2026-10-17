@@ -9,15 +9,24 @@ import { Testimonial } from "@/models/Testimonial"
 import { TestimonialFormValues } from "@/lib/schemas"
 import { serializeTestimonial } from "@/lib/serializers"
 
+/**
+ * Fetch all testimonials, optionally filtering by active status only.
+ * Returns serialized, lean plain objects.
+ */
 export async function getTestimonials(options: { activeOnly?: boolean } = {}) {
   await dbConnect()
   const query = options.activeOnly ? { isActive: true } : {}
   const testimonials = await Testimonial.find(query)
     .sort({ order: 1, createdAt: -1 })
     .lean()
-  return testimonials.map(serializeTestimonial)
+  return testimonials
+    .map(serializeTestimonial)
+    .filter((t): t is NonNullable<typeof t> => t !== null)
 }
 
+/**
+ * Fetch a single testimonial by its MongoDB ID.
+ */
 export async function getTestimonialById(id: string) {
   await dbConnect()
   const testimonial = await Testimonial.findById(id).lean()

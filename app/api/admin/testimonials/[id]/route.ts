@@ -4,25 +4,34 @@ import {
   updateTestimonial,
   deleteTestimonial,
 } from "@/lib/services/testimonialService"
+import { testimonialSchema } from "@/lib/schemas"
 import { auth } from "@/auth"
 
 export async function GET(
-  req: Request,
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
-  if (!session) return new NextResponse("Unauthorized", { status: 401 })
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
   try {
     const { id } = await params
     const testimonial = await getTestimonialById(id)
     if (!testimonial) {
-      return new NextResponse("Not Found", { status: 404 })
+      return NextResponse.json(
+        { error: "Testimonial not found" },
+        { status: 404 }
+      )
     }
     return NextResponse.json(testimonial)
   } catch (error) {
-    console.error("[TESTIMONIAL_GET]", error)
-    return new NextResponse("Internal error", { status: 500 })
+    console.error("[GET /api/admin/testimonials/[id]]", error)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }
 
@@ -31,32 +40,50 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
-  if (!session) return new NextResponse("Unauthorized", { status: 401 })
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
   try {
     const { id } = await params
     const body = await req.json()
-    const testimonial = await updateTestimonial(id, body)
+    const parsed = testimonialSchema.partial().safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid data", details: parsed.error.format() },
+        { status: 400 }
+      )
+    }
+
+    const testimonial = await updateTestimonial(id, parsed.data)
     return NextResponse.json(testimonial)
   } catch (error) {
-    console.error("[TESTIMONIAL_PUT]", error)
-    return new NextResponse("Internal error", { status: 500 })
+    console.error("[PUT /api/admin/testimonials/[id]]", error)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }
 
 export async function DELETE(
-  req: Request,
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
-  if (!session) return new NextResponse("Unauthorized", { status: 401 })
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
   try {
     const { id } = await params
     await deleteTestimonial(id)
-    return new NextResponse(null, { status: 204 })
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("[TESTIMONIAL_DELETE]", error)
-    return new NextResponse("Internal error", { status: 500 })
+    console.error("[DELETE /api/admin/testimonials/[id]]", error)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }

@@ -101,6 +101,7 @@ export function Preloader() {
             src="/logo.png"
             alt="Thresh Studio"
             fill
+            sizes="(max-width: 768px) 192px, 288px"
             className="relative z-10 object-contain brightness-125 contrast-125 drop-shadow-[0_0_30px_rgba(0,211,218,0.6)]"
           />
         </div>

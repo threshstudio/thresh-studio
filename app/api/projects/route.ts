@@ -7,9 +7,9 @@ export async function GET() {
     const projects = await getProjects({ publishedOnly: true })
     return NextResponse.json(projects)
   } catch (error) {
-    console.error("[PUBLIC_PROJECTS_GET]", error)
+    console.error("[GET /api/projects]", error)
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal server error" },
       { status: 500 }
     )
   }

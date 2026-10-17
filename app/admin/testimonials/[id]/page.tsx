@@ -47,8 +47,7 @@ export default async function EditTestimonialPage({
                 Update the client review details.
               </p>
             </div>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <TestimonialForm initialData={testimonial as any} />
+            <TestimonialForm initialData={testimonial} />
           </div>
         </main>
       </div>

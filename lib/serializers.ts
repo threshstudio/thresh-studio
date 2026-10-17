@@ -1,3 +1,8 @@
+/**
+ * @file serializers.ts
+ * @description Mongoose .lean() document serializers transforming database models into plain JSON.
+ */
+
 import { IProject } from "@/models/Project"
 
 export type LeanDoc<T> = T & {
@@ -7,6 +12,9 @@ export type LeanDoc<T> = T & {
   updatedAt?: Date | string
 }
 
+/**
+ * Serializes a lean Project Mongoose document into a plain frontend object.
+ */
 export function serializeProject(doc: LeanDoc<IProject> | null) {
   if (!doc) return null
 
@@ -95,6 +103,43 @@ export function serializeAdminUser(doc: LeanDoc<IAdminUser> | null) {
     email: doc.email,
     pendingEmail: doc.pendingEmail || null,
     role: doc.role,
+    createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : null,
+    updatedAt: doc.updatedAt ? new Date(doc.updatedAt).toISOString() : null,
+  }
+}
+
+import { ISubscriber } from "@/models/Subscriber"
+import { INewsletterCampaign } from "@/models/NewsletterCampaign"
+
+export function serializeSubscriber(doc: LeanDoc<ISubscriber> | null) {
+  if (!doc) return null
+
+  return {
+    id: doc._id?.toString() || doc.id,
+    email: doc.email,
+    status: doc.status,
+    source: doc.source,
+    unsubscribeToken: doc.unsubscribeToken,
+    createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : null,
+    updatedAt: doc.updatedAt ? new Date(doc.updatedAt).toISOString() : null,
+  }
+}
+
+export function serializeNewsletterCampaign(
+  doc: LeanDoc<INewsletterCampaign> | null
+) {
+  if (!doc) return null
+
+  return {
+    id: doc._id?.toString() || doc.id,
+    subject: doc.subject,
+    previewText: doc.previewText ?? null,
+    contentHtml: doc.contentHtml,
+    contentJson: doc.contentJson || null,
+    sentBy: doc.sentBy ?? null,
+    recipientCount: doc.recipientCount ?? 0,
+    status: doc.status,
+    sentAt: doc.sentAt ? new Date(doc.sentAt).toISOString() : null,
     createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : null,
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt).toISOString() : null,
   }

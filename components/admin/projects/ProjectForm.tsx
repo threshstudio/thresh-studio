@@ -1,23 +1,19 @@
 "use client"
 
 import React, { useState } from "react"
-import { useForm, useFieldArray } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import {
-  Loader2,
-  Plus,
-  Trash2,
-  GripVertical,
-  Image as ImageIcon,
-} from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { projectFormSchema, ProjectFormValues } from "@/lib/schemas"
 import { uploadToCloudinary } from "@/lib/uploadToCloudinary"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { FileUpload } from "@/components/ui/file-upload"
 import { MultiFileUpload } from "@/components/ui/multi-file-upload"
+import { ProjectStatsSection } from "./ProjectStatsSection"
+import { ProjectStorySection } from "./ProjectStorySection"
 
 export function ProjectForm({
   initialData,
@@ -55,46 +51,6 @@ export function ProjectForm({
     },
   })
 
-  const {
-    fields: statFields,
-    append: appendStat,
-    remove: removeStat,
-  } = useFieldArray({
-    control: form.control,
-    name: "stats",
-  })
-
-  // Simple string array handlers for Services, Deliverables, and Gallery
-  const [serviceInput, setServiceInput] = useState("")
-  const addService = () => {
-    if (!serviceInput.trim()) return
-    const current = form.getValues("services")
-    form.setValue("services", [...current, serviceInput.trim()])
-    setServiceInput("")
-  }
-  const removeService = (idx: number) => {
-    const current = form.getValues("services")
-    form.setValue(
-      "services",
-      current.filter((_, i) => i !== idx)
-    )
-  }
-
-  const [deliverableInput, setDeliverableInput] = useState("")
-  const addDeliverable = () => {
-    if (!deliverableInput.trim()) return
-    const current = form.getValues("deliverables")
-    form.setValue("deliverables", [...current, deliverableInput.trim()])
-    setDeliverableInput("")
-  }
-  const removeDeliverable = (idx: number) => {
-    const current = form.getValues("deliverables")
-    form.setValue(
-      "deliverables",
-      current.filter((_, i) => i !== idx)
-    )
-  }
-
   const onSubmit = async (data: ProjectFormValues) => {
     if (!heroVideoFile) {
       toast.error("Please upload a Hero Video")
@@ -113,12 +69,9 @@ export function ProjectForm({
       }
       data.videoUrl = finalVideoUrl
 
-      // The most efficient approach: Controlled Concurrency (Batching)
-      // Uploads 3 files in parallel. Faster than sequential, safer than Promise.all(everything)
+      // Controlled Concurrency batch upload
       const finalGalleryUrls: string[] = []
       const CONCURRENCY_LIMIT = 3
-      let uploadCount = 0
-      const newFilesToUpload = galleryFiles.filter((f) => f instanceof File)
 
       for (let i = 0; i < galleryFiles.length; i += CONCURRENCY_LIMIT) {
         const batch = galleryFiles.slice(i, i + CONCURRENCY_LIMIT)
@@ -126,7 +79,6 @@ export function ProjectForm({
         const batchResults = await Promise.all(
           batch.map(async (fileOrUrl) => {
             if (fileOrUrl instanceof File) {
-              uploadCount++
               return await uploadToCloudinary(
                 fileOrUrl,
                 "thresh-studio/projects"
@@ -138,6 +90,7 @@ export function ProjectForm({
 
         finalGalleryUrls.push(...batchResults)
       }
+
       data.gallery = finalGalleryUrls
 
       const endpoint = initialData
@@ -268,182 +221,10 @@ export function ProjectForm({
       </section>
 
       {/* ── 2. STATS ────────────────────────── */}
-      <section className="space-y-6">
-        <h3 className="border-b border-neutral-800 pb-2 text-xl font-bold tracking-tight text-white">
-          2. Stats
-        </h3>
-        <div className="space-y-4">
-          {statFields.map((field, idx) => (
-            <div key={field.id} className="flex items-start gap-4">
-              <Field className="flex-1">
-                <Input
-                  {...form.register(`stats.${idx}.value` as const)}
-                  placeholder="Value (e.g. +300%)"
-                />
-              </Field>
-              <Field className="flex-1">
-                <Input
-                  {...form.register(`stats.${idx}.label` as const)}
-                  placeholder="Label (e.g. Conversion Rate)"
-                />
-              </Field>
-              <button
-                type="button"
-                onClick={() => removeStat(idx)}
-                className="rounded-md bg-red-500/10 p-3 text-red-500 transition-colors hover:bg-red-500 hover:text-white"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => appendStat({ label: "", value: "" })}
-            className="flex items-center gap-1 text-sm text-brand-300 hover:text-brand-200"
-          >
-            <Plus className="h-4 w-4" /> Add Stat
-          </button>
-        </div>
-      </section>
+      <ProjectStatsSection form={form} />
 
-      {/* ── 3. OVERVIEW ────────────────────────── */}
-      <section className="space-y-6">
-        <h3 className="border-b border-neutral-800 pb-2 text-xl font-bold tracking-tight text-white">
-          3. Overview
-        </h3>
-        <Field>
-          <FieldLabel isRequired>Description</FieldLabel>
-          <textarea
-            {...form.register("description")}
-            className="min-h-[120px] w-full rounded-xl border border-neutral-800/60 bg-neutral-900/40 p-4 text-white outline-none focus:border-brand-500/40 focus:bg-neutral-900/80 focus:ring-1 focus:ring-brand-500/40"
-            placeholder="Detailed overview..."
-          />
-          <FieldError
-            errors={[
-              form.formState.errors.description as unknown as {
-                message?: string
-              },
-            ]}
-          />
-        </Field>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div className="space-y-3">
-            <FieldLabel>Services</FieldLabel>
-            <div className="flex gap-2">
-              <Input
-                value={serviceInput}
-                onChange={(e) => setServiceInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    addService()
-                  }
-                }}
-                placeholder="Add service..."
-              />
-              <button
-                type="button"
-                onClick={addService}
-                className="rounded-lg bg-neutral-800 px-4 text-white hover:bg-neutral-700"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {form.watch("services").map((srv, idx) => (
-                <span
-                  key={idx}
-                  className="flex items-center gap-2 rounded-full bg-neutral-800 px-3 py-1 text-xs text-neutral-300"
-                >
-                  {srv}{" "}
-                  <button
-                    type="button"
-                    onClick={() => removeService(idx)}
-                    className="hover:text-red-400"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <FieldLabel>Deliverables</FieldLabel>
-            <div className="flex gap-2">
-              <Input
-                value={deliverableInput}
-                onChange={(e) => setDeliverableInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    addDeliverable()
-                  }
-                }}
-                placeholder="Add deliverable..."
-              />
-              <button
-                type="button"
-                onClick={addDeliverable}
-                className="rounded-lg bg-neutral-800 px-4 text-white hover:bg-neutral-700"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {form.watch("deliverables").map((del, idx) => (
-                <span
-                  key={idx}
-                  className="bg-brand-900/30 flex items-center gap-2 rounded-full border border-brand-500/30 px-3 py-1 text-xs text-brand-200"
-                >
-                  {del}{" "}
-                  <button
-                    type="button"
-                    onClick={() => removeDeliverable(idx)}
-                    className="hover:text-red-400"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 4. CHALLENGE / APPROACH ────────────────────────── */}
-      <section className="space-y-6">
-        <h3 className="border-b border-neutral-800 pb-2 text-xl font-bold tracking-tight text-white">
-          4. Challenge & Approach
-        </h3>
-        <Field>
-          <FieldLabel isRequired>The Challenge</FieldLabel>
-          <textarea
-            {...form.register("challenge")}
-            className="min-h-[120px] w-full rounded-xl border border-neutral-800/60 bg-neutral-900/40 p-4 text-white outline-none"
-          />
-          <FieldError
-            errors={[
-              form.formState.errors.challenge as unknown as {
-                message?: string
-              },
-            ]}
-          />
-        </Field>
-        <Field>
-          <FieldLabel isRequired>Our Approach</FieldLabel>
-          <textarea
-            {...form.register("approach")}
-            className="min-h-[120px] w-full rounded-xl border border-neutral-800/60 bg-neutral-900/40 p-4 text-white outline-none"
-          />
-          <FieldError
-            errors={[
-              form.formState.errors.approach as unknown as { message?: string },
-            ]}
-          />
-        </Field>
-      </section>
+      {/* ── 3, 4, 6. STORY SECTIONS ─────────── */}
+      <ProjectStorySection form={form} />
 
       {/* ── 5. GALLERY ────────────────────────── */}
       <section className="space-y-6">
@@ -456,37 +237,6 @@ export function ProjectForm({
           onChange={setGalleryFiles}
           description="Drag and drop multiple images, GIFs, or videos to build the gallery grid."
         />
-      </section>
-
-      {/* ── 6. OUTCOME ────────────────────────── */}
-      <section className="space-y-6">
-        <h3 className="border-b border-neutral-800 pb-2 text-xl font-bold tracking-tight text-white">
-          6. Outcome & Publish
-        </h3>
-        <Field>
-          <FieldLabel isRequired>The Result</FieldLabel>
-          <textarea
-            {...form.register("outcome")}
-            className="min-h-[120px] w-full rounded-xl border border-neutral-800/60 bg-neutral-900/40 p-4 text-white outline-none"
-          />
-          <FieldError
-            errors={[
-              form.formState.errors.outcome as unknown as { message?: string },
-            ]}
-          />
-        </Field>
-
-        <div className="mt-6 flex items-center gap-4 rounded-xl border border-neutral-800 bg-neutral-900/50 p-4">
-          <input
-            type="checkbox"
-            id="isPublished"
-            {...form.register("isPublished")}
-            className="h-5 w-5 accent-brand-500"
-          />
-          <label htmlFor="isPublished" className="font-medium text-white">
-            Publish Project (Visible to Public)
-          </label>
-        </div>
       </section>
 
       <div className="flex justify-end pt-10">

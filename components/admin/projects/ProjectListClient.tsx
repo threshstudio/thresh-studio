@@ -17,6 +17,7 @@ import {
 
 import { ProjectFormValues } from "@/lib/schemas"
 import { ConfirmAlert } from "@/components/ui/confirm-alert"
+import { VideoMuteButton } from "@/components/media/VideoMuteButton"
 
 export function ProjectListClient({
   initialProjects,
@@ -182,6 +183,7 @@ export function ProjectListClient({
                       /{project.slug}
                     </p>
                   </div>
+                  {project.videoUrl && <VideoMuteButton size="sm" />}
                 </div>
               </div>
 

@@ -8,6 +8,8 @@ import { gsap, useGSAP } from "@/lib/gsap"
 import { useSettings } from "@/hooks/useSettings"
 import { FaInstagram, FaLinkedinIn, FaVimeoV, FaTwitter } from "react-icons/fa"
 
+import { FooterNewsletterForm } from "../newsletter/FooterNewsletterForm"
+
 export function Footer() {
   const { setCursorState } = useCursor()
   const container = useRef<HTMLElement>(null)
@@ -165,7 +167,7 @@ export function Footer() {
             <div className="flex flex-col gap-6 text-left">
               <span className="mb-2 text-neutral-400">Contact</span>
               <a
-                href="mailto:hello@thresh.studio"
+                href="mailto:threshstudioz@gmail.com"
                 className="cursor-none text-neutral-100 transition-colors hover:text-brand-300"
                 onMouseEnter={() => setCursorState("magnetic")}
                 onMouseLeave={() => setCursorState("default")}
@@ -173,7 +175,9 @@ export function Footer() {
                 Email Us
               </a>
               <a
-                href="mailto:hello@thresh.studio"
+                href="https://calendly.com/threshstudioz/30min"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="cursor-none text-neutral-100 transition-colors hover:text-brand-300"
                 onMouseEnter={() => setCursorState("magnetic")}
                 onMouseLeave={() => setCursorState("default")}
@@ -187,14 +191,14 @@ export function Footer() {
         {/* Massive Call to action */}
         <div className="flex w-full flex-col items-start">
           <a
-            href="mailto:hello@thresh.studio"
+            href="mailto:threshstudioz@gmail.com"
             className="group relative inline-flex w-full cursor-none flex-col"
             onMouseEnter={() => setCursorState("magnetic")}
             onMouseLeave={() => setCursorState("default")}
           >
             {/* Responsively scaled to fit perfectly */}
             <span className="text-[6vw] font-bold tracking-tighter uppercase transition-colors group-hover:text-brand-200 md:text-[5vw]">
-              hello@thresh.studio
+              threshstudioz@gmail.com
             </span>
             <div className="relative mt-2 h-[2px] w-full overflow-hidden bg-neutral-600">
               <div className="absolute top-0 left-0 h-full w-full -translate-x-full bg-brand-300 transition-transform duration-700 ease-out group-hover:translate-x-0" />
@@ -204,14 +208,22 @@ export function Footer() {
       </div>
 
       {/* Massive Brand Mark at the bottom */}
-      <div className="relative z-10 mt-auto flex w-full flex-col items-center justify-end overflow-hidden pt-24">
+      <div className="relative z-10 mt-auto flex w-full flex-col items-center justify-end overflow-hidden pt-12 md:pt-16">
         <div className="relative mt-12 mb-4 h-24 w-full md:h-40 xl:h-60">
           <Image
             src="/logo.png"
             alt="Thresh Studio"
             fill
+            sizes="100vw"
             className="footer-logo object-contain opacity-80 mix-blend-plus-lighter"
           />
+        </div>
+
+        {/* Subscribe input down below after the logo at the right */}
+        <div className="flex w-full justify-end py-2 md:py-4">
+          <div className="w-full max-w-sm">
+            <FooterNewsletterForm className="mt-0 ml-auto" />
+          </div>
         </div>
 
         <div className="mt-8 flex w-full flex-col items-center justify-between gap-6 border-t border-neutral-800 pt-8 font-mono text-xs tracking-[0.2em] text-neutral-400 uppercase md:flex-row md:text-sm">

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { useCursor } from "../cursor/CursorContext"
 import { useLenis } from "lenis/react"
 import Link from "next/link"
@@ -70,7 +70,7 @@ export function Navbar() {
         {/* Right CTA & Mobile Toggle */}
         <div className="flex shrink-0 items-center gap-4">
           <a
-            href="mailto:hello@thresh.studio"
+            href="mailto:threshstudioz@gmail.com"
             className="group relative flex hidden cursor-none items-center justify-center overflow-hidden rounded-full border border-neutral-700 px-5 py-3 transition-colors duration-700 hover:border-brand-300 md:flex md:px-8 md:py-4"
             onMouseEnter={() => setCursorState("magnetic")}
             onMouseLeave={() => setCursorState("default")}
@@ -116,7 +116,7 @@ export function Navbar() {
             </Link>
           ))}
           <a
-            href="mailto:hello@thresh.studio"
+            href="mailto:threshstudioz@gmail.com"
             className="mt-8 rounded-full border border-brand-500 bg-brand-500/10 px-8 py-4 font-mono text-sm tracking-[0.2em] text-brand-100 uppercase"
           >
             Start Project

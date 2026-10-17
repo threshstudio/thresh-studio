@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   MessageSquare,
+  Mail,
 } from "lucide-react"
 import { signOut } from "next-auth/react"
 import { ConfirmAlert } from "@/components/ui/confirm-alert"
@@ -46,6 +47,12 @@ export function AdminSidebarClient({
       name: "Testimonials",
       href: "/admin/testimonials",
       icon: MessageSquare,
+      disabled: false,
+    },
+    {
+      name: "Newsletter",
+      href: "/admin/newsletter",
+      icon: Mail,
       disabled: false,
     },
     {

@@ -1,34 +1,19 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
-import { AdminUser } from "@/models/AdminUser"
-import dbConnect from "@/lib/db"
-import bcrypt from "bcryptjs"
-import crypto from "crypto"
 import { updateEmailSchema, updatePasswordSchema } from "@/lib/schemas"
-import { VerificationToken } from "@/models/VerificationToken"
-import { EMAIL_VERIFICATION_EXPIRY } from "@/lib/constants"
 import {
-  sendEmailChangeVerification,
-  sendEmailChangeAlert,
-  sendPasswordChangeAlert,
-} from "@/lib/email"
+  requestEmailChange,
+  changeAdminPassword,
+} from "@/lib/services/accountService"
 
 export async function PATCH(req: Request) {
   try {
     const session = await auth()
-    if (!session || !session.user?.email)
+    if (!session || !session.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
     const body = await req.json()
-
-    await dbConnect()
-    const user = session.user.id
-      ? await AdminUser.findById(session.user.id)
-      : await AdminUser.findOne({ email: session.user.email })
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
-    }
 
     if (body.type === "email") {
       const parsed = updateEmailSchema.safeParse(body)
@@ -39,34 +24,13 @@ export async function PATCH(req: Request) {
         )
       }
 
-      // Update pending email instead of immediate change
-      user.pendingEmail = parsed.data.email
-      await user.save()
-
-      // Generate verification token
-      const rawToken = crypto.randomBytes(32).toString("hex")
-      const hashedToken = crypto
-        .createHash("sha256")
-        .update(rawToken)
-        .digest("hex")
-
-      await VerificationToken.create({
-        identifier: user.id,
-        token: hashedToken,
-        type: "EMAIL_CHANGE",
-        expiresAt: new Date(Date.now() + EMAIL_VERIFICATION_EXPIRY),
+      const result = await requestEmailChange({
+        userId: session.user.id,
+        userEmail: session.user.email,
+        newEmail: parsed.data.email,
       })
 
-      // Send emails
-      await Promise.all([
-        sendEmailChangeVerification(parsed.data.email, rawToken),
-        sendEmailChangeAlert(user.email, parsed.data.email),
-      ])
-
-      return NextResponse.json({
-        success: true,
-        message: "Verification email sent to new address.",
-      })
+      return NextResponse.json(result)
     } else if (body.type === "password") {
       const parsed = updatePasswordSchema.safeParse(body)
       if (!parsed.success) {
@@ -78,28 +42,30 @@ export async function PATCH(req: Request) {
 
       const { currentPassword, newPassword } = parsed.data
 
-      if (!user.password) {
-        return NextResponse.json({ error: "Password not set" }, { status: 400 })
+      try {
+        await changeAdminPassword({
+          userId: session.user.id,
+          userEmail: session.user.email,
+          currentPassword,
+          newPassword,
+        })
+        return NextResponse.json({ success: true })
+      } catch (err: unknown) {
+        const error = err as Error
+        if (error.message === "INCORRECT_PASSWORD") {
+          return NextResponse.json(
+            { error: "Incorrect current password" },
+            { status: 400 }
+          )
+        }
+        if (error.message === "PASSWORD_NOT_SET") {
+          return NextResponse.json(
+            { error: "Password not set" },
+            { status: 400 }
+          )
+        }
+        throw err
       }
-
-      // Verify current password
-      const isMatch = await bcrypt.compare(currentPassword, user.password)
-      if (!isMatch) {
-        return NextResponse.json(
-          { error: "Incorrect current password" },
-          { status: 400 }
-        )
-      }
-
-      // Update password
-      const salt = await bcrypt.genSalt(10)
-      user.password = await bcrypt.hash(newPassword, salt)
-      await user.save()
-
-      // Send notification
-      await sendPasswordChangeAlert(user.email)
-
-      return NextResponse.json({ success: true })
     } else {
       return NextResponse.json(
         { error: "Invalid update type" },

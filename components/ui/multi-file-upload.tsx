@@ -3,6 +3,7 @@
 import React, { useCallback, useState, useRef } from "react"
 import { UploadCloud, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { VideoMuteButton } from "@/components/media/VideoMuteButton"
 
 interface MultiFileUploadProps {
   value: (File | string)[]
@@ -154,14 +155,19 @@ export function MultiFileUpload({
                 className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-neutral-700 bg-black shadow-inner"
               >
                 {preview.type === "video" ? (
-                  <video
-                    src={preview.url}
-                    className="absolute inset-0 h-full w-full object-cover opacity-80"
-                    muted
-                    loop
-                    playsInline
-                    autoPlay
-                  />
+                  <>
+                    <video
+                      src={preview.url}
+                      className="absolute inset-0 h-full w-full object-cover opacity-80"
+                      muted
+                      loop
+                      playsInline
+                      autoPlay
+                    />
+                    <div className="absolute right-2 bottom-2 z-10">
+                      <VideoMuteButton size="xs" />
+                    </div>
+                  </>
                 ) : (
                   <img
                     src={preview.url}

@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { Video, Eye, EyeOff, Edit, Trash2 } from "lucide-react"
 import { ProjectFormValues } from "@/lib/schemas"
 import { ConfirmAlert } from "@/components/ui/confirm-alert"
+import { VideoMuteButton } from "@/components/media/VideoMuteButton"
 
 export function DashboardRecentProjects({
   projects,
@@ -62,12 +63,17 @@ export function DashboardRecentProjects({
                         {project.videoUrl ||
                         (project.gallery && project.gallery[0]) ? (
                           project.videoUrl ? (
-                            <video
-                              src={project.videoUrl}
-                              className="h-8 w-12 rounded bg-neutral-800 object-cover"
-                              muted
-                              playsInline
-                            />
+                            <div className="relative inline-block">
+                              <video
+                                src={project.videoUrl}
+                                className="h-8 w-12 rounded bg-neutral-800 object-cover"
+                                muted
+                                playsInline
+                              />
+                              <div className="absolute -right-1 -bottom-1 z-10">
+                                <VideoMuteButton size="xs" />
+                              </div>
+                            </div>
                           ) : (
                             <img
                               src={project.gallery?.[0]}
@@ -148,12 +154,17 @@ export function DashboardRecentProjects({
                   {project.videoUrl ||
                   (project.gallery && project.gallery[0]) ? (
                     project.videoUrl ? (
-                      <video
-                        src={project.videoUrl}
-                        className="h-12 w-16 rounded-md bg-neutral-800 object-cover"
-                        muted
-                        playsInline
-                      />
+                      <div className="relative inline-block">
+                        <video
+                          src={project.videoUrl}
+                          className="h-12 w-16 rounded-md bg-neutral-800 object-cover"
+                          muted
+                          playsInline
+                        />
+                        <div className="absolute -right-1 -bottom-1 z-10">
+                          <VideoMuteButton size="xs" />
+                        </div>
+                      </div>
                     ) : (
                       <img
                         src={project.gallery?.[0]}

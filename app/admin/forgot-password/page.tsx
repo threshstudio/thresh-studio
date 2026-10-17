@@ -1,53 +1,20 @@
 "use client"
 
 import React, { useState } from "react"
-import { Loader2, Mail, ArrowRight, CheckCircle2 } from "lucide-react"
+import { Mail, CheckCircle2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { ForgotPasswordForm } from "@/components/admin/auth/ForgotPasswordForm"
 
 export default function ForgotPasswordPage() {
-  const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    const formData = new FormData(e.currentTarget)
-    const email = formData.get("email") as string
-
-    try {
-      const res = await fetch("/api/admin/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      })
-
-      if (res.ok) {
-        setIsSuccess(true)
-        // Redirect to reset password with email prepopulated after 2 seconds
-        setTimeout(() => {
-          router.push(
-            `/admin/reset-password?email=${encodeURIComponent(email)}`
-          )
-        }, 2000)
-      } else {
-        // Even if it fails, we shouldn't necessarily show it to prevent enumeration,
-        // but for now we'll just handle basic errors
-        const data = await res.json()
-        throw new Error(data.error || "Failed to request reset")
-      }
-    } catch (error) {
-      console.error(error)
-      // Usually, show a generic success to prevent email enumeration, but here we can just go to next step
-      setIsSuccess(true)
-      setTimeout(() => {
-        router.push(`/admin/reset-password?email=${encodeURIComponent(email)}`)
-      }, 2000)
-    } finally {
-      setIsLoading(false)
-    }
+  const handleSuccess = (email: string) => {
+    setIsSuccess(true)
+    setTimeout(() => {
+      router.push(`/admin/reset-password?email=${encodeURIComponent(email)}`)
+    }, 2000)
   }
 
   return (
@@ -73,46 +40,7 @@ export default function ForgotPasswordPage() {
           </p>
         </div>
 
-        {!isSuccess && (
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-1.5 block text-xs font-medium tracking-wider text-neutral-400 uppercase"
-              >
-                Email Address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                disabled={isLoading}
-                className="block w-full rounded-lg border border-neutral-800 bg-neutral-900/50 px-4 py-3.5 text-neutral-100 transition-all placeholder:text-neutral-600 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 disabled:opacity-50 sm:text-sm"
-                placeholder="admin@threshstudio.com"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative flex w-full items-center justify-center rounded-lg bg-brand-200 px-4 py-4 text-sm font-bold tracking-widest text-neutral-950 uppercase shadow-lg shadow-brand-500/20 transition-all hover:bg-brand-100 hover:shadow-xl hover:shadow-brand-500/30 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Sending OTP...
-                </>
-              ) : (
-                <>
-                  Send OTP
-                  <ArrowRight className="ml-2 h-4 w-4 opacity-70 transition-transform group-hover:translate-x-1" />
-                </>
-              )}
-            </button>
-          </form>
-        )}
+        {!isSuccess && <ForgotPasswordForm onSuccess={handleSuccess} />}
 
         <div className="mt-6 text-center">
           <Link

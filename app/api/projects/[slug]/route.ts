@@ -20,9 +20,9 @@ export async function GET(
 
     return NextResponse.json(project)
   } catch (error) {
-    console.error("[PUBLIC_PROJECT_GET]", error)
+    console.error("[GET /api/projects/[slug]]", error)
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal server error" },
       { status: 500 }
     )
   }

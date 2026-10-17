@@ -23,7 +23,7 @@ export async function GET(
 
     return NextResponse.json(project)
   } catch (error) {
-    console.error("[GET /api/admin/projects/:id]", error)
+    console.error("[GET /api/admin/projects/[id]]", error)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -54,7 +54,7 @@ export async function PUT(
     const updated = await updateProject(id, parsed.data)
     return NextResponse.json(updated)
   } catch (error) {
-    console.error("[PUT /api/admin/projects/:id]", error)
+    console.error("[PUT /api/admin/projects/[id]]", error)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -75,7 +75,7 @@ export async function DELETE(
     await deleteProject(id)
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("[DELETE /api/admin/projects/:id]", error)
+    console.error("[DELETE /api/admin/projects/[id]]", error)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

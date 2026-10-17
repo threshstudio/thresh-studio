@@ -30,10 +30,7 @@ export default async function TestimonialsPage() {
                 Manage your client feedback and reviews.
               </p>
             </div>
-            <TestimonialListClient
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              initialTestimonials={testimonials as any[]}
-            />
+            <TestimonialListClient initialTestimonials={testimonials} />
           </div>
         </main>
       </div>

@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useCursor } from "../cursor/CursorContext"
 import { useQuery } from "@tanstack/react-query"
 import { ProjectFormValues } from "@/lib/schemas"
+import { VideoMuteButton } from "@/components/media/VideoMuteButton"
 
 export function SelectedWork() {
   const container = useRef<HTMLDivElement>(null)
@@ -171,44 +172,47 @@ export function SelectedWork() {
 
                   {/* Overlays for contrast (always visible) */}
                   <div className="absolute inset-0 bg-neutral-900/20 mix-blend-multiply" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/80 via-transparent to-transparent opacity-90" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90" />
 
-                  {/* ── Per-card Case Study CTA ─────────────────────────────── */}
-                  <Link
-                    href={`/work/${project.slug}`}
-                    className="pointer-events-auto absolute bottom-8 left-8 z-30 md:bottom-12 md:left-12"
-                    onMouseEnter={() => setCursorState("link")}
-                    onMouseLeave={() => setCursorState("default")}
-                  >
-                    <div className="group/btn flex items-center gap-3">
-                      {/* Pill button */}
-                      <div className="relative flex items-center gap-3 overflow-hidden rounded-full border border-brand-500/40 bg-background/30 py-3 pr-4 pl-5 backdrop-blur-md transition-all duration-500 group-hover/btn:border-brand-400 group-hover/btn:bg-brand-500/15 group-hover/btn:pr-5">
-                        {/* Animated fill */}
-                        <div className="absolute inset-0 translate-x-[-101%] rounded-full bg-brand-500/10 transition-transform duration-500 ease-out group-hover/btn:translate-x-0" />
-                        <span className="relative font-mono text-xs tracking-[0.25em] whitespace-nowrap text-brand-100 uppercase transition-colors duration-300">
-                          Case Study
-                        </span>
-                        {/* Arrow icon */}
-                        <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-brand-500/20 transition-colors duration-300 group-hover/btn:bg-brand-400/30">
-                          <svg
-                            width="10"
-                            height="10"
-                            viewBox="0 0 10 10"
-                            fill="none"
-                            className="text-brand-100 transition-transform duration-300 group-hover/btn:translate-x-px"
-                          >
-                            <path
-                              d="M1 9L9 1M9 1H3M9 1V7"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </span>
+                  {/* ── Per-card Case Study CTA & Mute Toggle ─────────────────────────────── */}
+                  <div className="pointer-events-auto absolute bottom-8 left-8 z-30 flex items-center gap-4 md:bottom-12 md:left-12">
+                    <Link
+                      href={`/work/${project.slug}`}
+                      onMouseEnter={() => setCursorState("link")}
+                      onMouseLeave={() => setCursorState("default")}
+                    >
+                      <div className="group/btn flex items-center gap-3">
+                        {/* Pill button */}
+                        <div className="relative flex items-center gap-3 overflow-hidden rounded-full border border-brand-500/40 bg-background/30 py-3 pr-4 pl-5 backdrop-blur-md transition-all duration-500 group-hover/btn:border-brand-400 group-hover/btn:bg-brand-500/15 group-hover/btn:pr-5">
+                          {/* Animated fill */}
+                          <div className="absolute inset-0 translate-x-[-101%] rounded-full bg-brand-500/10 transition-transform duration-500 ease-out group-hover/btn:translate-x-0" />
+                          <span className="relative font-mono text-xs tracking-[0.25em] whitespace-nowrap text-brand-100 uppercase transition-colors duration-300">
+                            Case Study
+                          </span>
+                          {/* Arrow icon */}
+                          <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-brand-500/20 transition-colors duration-300 group-hover/btn:bg-brand-400/30">
+                            <svg
+                              width="10"
+                              height="10"
+                              viewBox="0 0 10 10"
+                              fill="none"
+                              className="text-brand-100 transition-transform duration-300 group-hover/btn:translate-x-px"
+                            >
+                              <path
+                                d="M1 9L9 1M9 1H3M9 1V7"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
+                    </Link>
+
+                    {project.videoUrl && <VideoMuteButton />}
+                  </div>
                 </div>
               </div>
             )

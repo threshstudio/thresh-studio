@@ -8,7 +8,10 @@ export async function GET() {
     const testimonials = await getTestimonials({ activeOnly: true })
     return NextResponse.json(testimonials)
   } catch (error) {
-    console.error("[PUBLIC_TESTIMONIALS_GET]", error)
-    return new NextResponse("Internal error", { status: 500 })
+    console.error("[GET /api/public/testimonials]", error)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }

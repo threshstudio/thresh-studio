@@ -1,9 +1,17 @@
+/**
+ * @file settingsService.ts
+ * @description Server-only domain service managing global site configurations and social links.
+ */
+
 import dbConnect from "@/lib/db"
 import { SiteSettings } from "@/models/SiteSettings"
 import { serializeSiteSettings, LeanDoc } from "@/lib/serializers"
 import { SiteSettingsValues } from "@/lib/schemas"
 import { ISiteSettings } from "@/models/SiteSettings"
 
+/**
+ * Retrieves the global site settings document, creating a default one if none exists.
+ */
 export async function getSiteSettings() {
   await dbConnect()
 
@@ -19,6 +27,9 @@ export async function getSiteSettings() {
   return serializeSiteSettings(settings as LeanDoc<ISiteSettings>)
 }
 
+/**
+ * Updates the global site settings document with partial values.
+ */
 export async function updateSiteSettings(data: Partial<SiteSettingsValues>) {
   await dbConnect()
 
